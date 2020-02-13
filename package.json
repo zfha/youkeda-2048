@@ -1,0 +1,14 @@
+{
+  "name": "2048",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:zfha/youkeda-2048.git",
+  "author": "zhoufan <zhoufan@qingguatang.com>",
+  "license": "MIT",
+  "scripts": {
+    "scss": "scss ./style/index.scss:./style/index.css"
+  },
+  "dependencies": {
+    "scss": "^0.2.4"
+  }
+}

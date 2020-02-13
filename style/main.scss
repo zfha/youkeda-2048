@@ -1,0 +1,124 @@
+$field-width: 290px;
+$grid-spacing: 10px;
+$grid-row-cells: 4;
+$tile-size: ($field-width - $grid-spacing * ($grid-row-cells + 1)) /
+  $grid-row-cells;
+$tile-border-radius: 3px;
+
+main {
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  width: $field-width;
+  height: $field-width;
+  position: relative;
+  padding: $grid-spacing;
+  background: #bbada0;
+  border-radius: 8px;
+
+  .game-grid {
+    .grid-row {
+      margin-bottom: $grid-spacing;
+      display: flex;
+
+      .grid-cell {
+        width: $tile-size;
+        height: $tile-size;
+        margin-right: $grid-spacing;
+        float: left;
+        border-radius: 3px;
+        background: rgba(238, 228, 218, 0.35);
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .tile-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    .tile {
+      position: absolute;
+      width: $tile-size;
+      height: $tile-size;
+      line-height: $tile-size;
+      border-radius: 4px;
+      background: #eee4da;
+      text-align: center;
+      font-weight: bold;
+      font-size: 34px;
+      color: #776e65;
+    }
+
+    @for $x from 1 through $grid-row-cells {
+      @for $y from 1 through $grid-row-cells {
+        .tile-position-#{$x}-#{$y} {
+          $xPos: $grid-spacing + floor(($tile-size + $grid-spacing) * ($y - 1));
+          $yPos: $grid-spacing + floor(($tile-size + $grid-spacing) * ($x - 1));
+          transform: translate($xPos, $yPos);
+        }
+      }
+    }
+
+    .tile.tile-2 {
+      background: #eee4da;
+    }
+    .tile.tile-4 {
+      background: #ede0c8;
+    }
+    .tile.tile-8 {
+      color: #f9f6f2;
+      background: #f2b179;
+    }
+    .tile.tile-16 {
+      color: #f9f6f2;
+      background: #f59563;
+    }
+    .tile.tile-32 {
+      color: #f9f6f2;
+      background: #f67c5f;
+    }
+    .tile.tile-64 {
+      color: #f9f6f2;
+      background: #f65e3b;
+    }
+    .tile.tile-128 {
+      color: #f9f6f2;
+      background: #edcf72;
+      font-size: 30px;
+    }
+
+    .tile.tile-256 {
+      color: #f9f6f2;
+      background: #edcc61;
+      font-size: 30px;
+    }
+
+    .tile.tile-512 {
+      color: #f9f6f2;
+      background: #edc850;
+      font-size: 30px;
+    }
+
+    .tile.tile-1024 {
+      color: #f9f6f2;
+      background: #edc53f;
+      font-size: 22px;
+    }
+
+    .tile.tile-2048 {
+      color: #f9f6f2;
+      background: #edc22e;
+      font-size: 22px;
+    }
+  }
+}
