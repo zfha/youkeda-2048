@@ -3,6 +3,13 @@ p {
   margin: 0;
 }
 
+button {
+  cursor: pointer;
+}
+button:focus {
+  outline: none;
+}
+
 nav {
   height: 68px;
   padding: 30px 42px;
@@ -63,10 +70,7 @@ nav .score > div .value {
   line-height: 44px;
   text-align: center;
   font-weight: 700;
-  font-family: Arial, Helvetica, sans-serif;
-}
-.desc button:focus {
-  outline: none;
+  font-family: Arial-Black;
 }
 
 main {
@@ -220,6 +224,7 @@ main .tile-container .tile.tile-2048 {
 }
 
 .container {
+  position: relative;
   width: 375px;
   height: 667px;
   position: fixed;
@@ -244,6 +249,38 @@ footer span {
   font-size: 14px;
   color: #8f7a67;
   font-weight: 500;
+}
+
+.mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.4);
+}
+.mask .content {
+  font-family: Arial-Black;
+  font-size: 26px;
+  color: #8f7a67;
+  text-align: center;
+}
+.mask button {
+  margin-top: 20px;
+  width: 98px;
+  height: 44px;
+  background: #8f7a67;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #ffffff;
+  text-align: center;
+  font-family: Arial-Black;
+  font-weight: 700;
+  line-height: 44px;
 }
 
 /*# sourceMappingURL=index.css.map */
