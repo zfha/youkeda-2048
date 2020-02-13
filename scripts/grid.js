@@ -18,6 +18,10 @@ Grid.prototype.add = function(tile) {
   this.cells[tile.x][tile.y] = tile;
 };
 
+Grid.prototype.get = function(position) {
+  return this.cells[position.x][position.y];
+};
+
 Grid.prototype.randomAvailableCell = function() {
   const cells = this.availableCells();
   if (cells.length > 0) {
@@ -27,8 +31,8 @@ Grid.prototype.randomAvailableCell = function() {
 
 Grid.prototype.contentCells = function() {
   const cells = [];
-  for (let x = 0; x < grid.size; x++) {
-    for (let y = 0; y < grid.size; y++) {
+  for (let x = 0; x < this.size; x++) {
+    for (let y = 0; y < this.size; y++) {
       if (this.cells[x][y]) {
         cells.push(this.cells[x][y]);
       }
