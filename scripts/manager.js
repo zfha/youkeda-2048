@@ -2,7 +2,10 @@ function Manager(size = 4) {
   this.size = size;
   this.grid = new Grid(size);
   this.render = new Render();
-  this.listener = new Listener(this.listenerFn);
+  let self = this;
+  this.listener = new Listener(function(direction) {
+    self.listenerFn(direction);
+  });
   this.start();
 }
 
@@ -16,33 +19,71 @@ Manager.prototype.start = function() {
 };
 
 Manager.prototype.listenerFn = function(direction) {
-  const { xPath, yPath } = this.paths;
-  for (let i = 0; i < xPath.length; i++) {
-    for (let j = 0; j < yPath.length; j++) {
-      const position = { x: xPath[i], y: yPath[j] };
+  const { rowPath, columnPath } = this.getPaths(direction);
+  for (let i = 0; i < rowPath.length; i++) {
+    for (let j = 0; j < columnPath.length; j++) {
+      const position = { row: rowPath[i], column: columnPath[j] };
       const tile = this.grid.get(position);
       if (tile) {
+        const { aim, next } = this.getNearestAvaibleAim(position, direction);
+        this.moveTile(tile, aim);
       }
     }
   }
+  this.render.render(this.grid);
 };
 
-Manager.prototype.paths = function(direction) {
-  const xPath = [];
-  const yPath = [];
+Manager.prototype.moveTile = function(tile, aim) {
+  this.grid.cells[tile.row][tile.column] = null;
+  this.grid.cells[aim.row][aim.column] = tile;
+  tile.updatePosition(aim);
+};
+
+Manager.prototype.getPaths = function(direction) {
+  let rowPath = [];
+  let columnPath = [];
   for (let i = 0; i < this.size; i++) {
-    xPath.push(i);
-    yPath.push(i);
+    rowPath.push(i);
+    columnPath.push(i);
   }
 
-  if (direction.x === 1) {
-    yPath = yPath.reverse();
+  if (direction.column === 1) {
+    columnPath = columnPath.reverse();
   }
-  if (direction.y === 1) {
-    xPath = xPath.reverse();
+  if (direction.row === 1) {
+    rowPath = rowPath.reverse();
   }
   return {
-    xPath,
-    yPath
+    rowPath,
+    columnPath
+  };
+};
+
+/**
+ * 1. 获取最近的移动位置
+ * 2. 获取最近的节点
+ *
+ */
+Manager.prototype.getNearestAvaibleAim = function(aim, direction) {
+  function addVector(position, direction) {
+    return {
+      row: position.row + direction.row,
+      column: position.column + direction.column
+    };
+  }
+  aim = addVector(aim, direction);
+  let next = this.grid.get(aim);
+  while (!this.grid.outOfRange(aim) && !next) {
+    aim = addVector(aim, direction);
+    next = this.grid.get(aim);
+  }
+
+  aim = {
+    row: aim.row - direction.row,
+    column: aim.column - direction.column
+  };
+  return {
+    aim,
+    next
   };
 };
