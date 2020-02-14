@@ -1,21 +1,31 @@
 function Manager(size = 4, aim = 2048) {
   this.size = size;
   this.aim = aim;
-  this.status = 'DOING';
-  this.grid = new Grid(size);
   this.render = new Render();
   let self = this;
-  this.listener = new Listener(function(direction) {
-    self.listenerFn(direction);
+  this.listener = new Listener({
+    move: function(direction) {
+      self.listenerFn(direction);
+    },
+    start: function() {
+      self.start();
+    }
   });
   this.start();
 }
 
 Manager.prototype.start = function() {
+  this.score = 0;
+  this.status = 'DOING';
+  this.grid = new Grid(this.size);
+
   for (let i = 0; i < 2; i++) {
     this.addRandomTile();
   }
-  this.render.render(this.grid);
+  this.render.render(this.grid, {
+    status: this.status,
+    score: this.score
+  });
 };
 
 Manager.prototype.addRandomTile = function() {
@@ -48,6 +58,7 @@ Manager.prototype.listenerFn = function(direction) {
             },
             tile.value * 2
           );
+          this.score += merged.value;
 
           this.grid.add(merged);
           this.grid.remove(tile);
@@ -70,7 +81,10 @@ Manager.prototype.listenerFn = function(direction) {
       this.status = 'FAILURE';
     }
 
-    this.render.render(this.grid, this.status);
+    this.render.render(this.grid, {
+      status: this.status,
+      score: this.score
+    });
   }
 };
 

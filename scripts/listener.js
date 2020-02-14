@@ -3,21 +3,28 @@
 // { row: 1, column: 0 }  向下
 // { row: 0, column: -1 } 向左
 // { row: 0, column: 1 }  向右
-function Listener(callback) {
+function Listener({ move: moveFn, start: startFn }) {
   window.addEventListener('keyup', function(e) {
     switch (e.keyCode) {
       case 38:
-        callback({ row: -1, column: 0 });
+        moveFn({ row: -1, column: 0 });
         break;
       case 37:
-        callback({ row: 0, column: -1 });
+        moveFn({ row: 0, column: -1 });
         break;
       case 39:
-        callback({ row: 0, column: 1 });
+        moveFn({ row: 0, column: 1 });
         break;
       case 40:
-        callback({ row: 1, column: 0 });
+        moveFn({ row: 1, column: 0 });
         break;
     }
   });
+
+  const buttons = document.querySelectorAll('button');
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', function() {
+      startFn();
+    });
+  }
 }

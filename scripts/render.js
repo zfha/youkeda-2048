@@ -1,15 +1,17 @@
 function Render() {
   this.tileContainer = document.querySelector('.tile-container');
   this.statusContainer = document.querySelector('.status');
+  this.scoreContainer = document.querySelector('.now .value');
 }
 
-Render.prototype.render = function(grid, status = 'DOING') {
+Render.prototype.render = function(grid, { status = 'DOING', score }) {
   this.empty();
   const cells = grid.contentCells();
   for (let i = 0; i < cells.length; i++) {
     this.renderTile(cells[i]);
   }
   this.renderStatus(status);
+  this.renderScore(score);
 };
 
 Render.prototype.empty = function() {
@@ -24,6 +26,11 @@ Render.prototype.renderStatus = function(status) {
   this.statusContainer.querySelector('.content').innerHTML =
     status === 'WIN' ? 'You Win!' : 'Game Over!';
 };
+
+Render.prototype.renderScore = function(score) {
+  this.scoreContainer.innerHTML = score;
+};
+
 Render.prototype.renderTile = function(tile) {
   const tileDom = document.createElement('div');
   let classList = [
