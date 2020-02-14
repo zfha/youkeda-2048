@@ -25,6 +25,10 @@ Grid.prototype.get = function(position) {
   return this.cells[position.row][position.column];
 };
 
+Grid.prototype.remove = function(tile) {
+  this.cells[tile.row][tile.column] = null;
+};
+
 Grid.prototype.outOfRange = function(position) {
   return (
     position.row < 0 ||

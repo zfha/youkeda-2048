@@ -10,10 +10,14 @@ function Manager(size = 4) {
 }
 
 Manager.prototype.start = function() {
-  for (let i = 0; i < 3; i++) {
-    const position = this.grid.randomAvailableCell();
-    this.grid.add(new Tile(position, 2));
-  }
+  // for (let i = 0; i < 3; i++) {
+  //   const position = this.grid.randomAvailableCell();
+  //   this.grid.add(new Tile(position, 2));
+  // }
+  this.grid.add(new Tile({ row: 0, column: 0 }, 2));
+  this.grid.add(new Tile({ row: 1, column: 0 }, 2));
+  this.grid.add(new Tile({ row: 2, column: 0 }, 4));
+  this.grid.add(new Tile({ row: 3, column: 0 }, 4));
 
   this.render.render(this.grid);
 };
@@ -26,7 +30,19 @@ Manager.prototype.listenerFn = function(direction) {
       const tile = this.grid.get(position);
       if (tile) {
         const { aim, next } = this.getNearestAvaibleAim(position, direction);
-        this.moveTile(tile, aim);
+        if (next && next.value === tile.value) {
+          const merged = new Tile(
+            {
+              row: next.row,
+              column: next.column
+            },
+            tile.value * 2
+          );
+          this.grid.add(merged);
+          this.grid.remove(tile);
+        } else {
+          this.moveTile(tile, aim);
+        }
       }
     }
   }
