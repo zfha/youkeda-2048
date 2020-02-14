@@ -257,7 +257,7 @@ footer span {
   right: 0;
   top: 0;
   bottom: 0;
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;

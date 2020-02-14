@@ -1,5 +1,7 @@
-function Manager(size = 4) {
+function Manager(size = 4, aim = 2048) {
   this.size = size;
+  this.aim = aim;
+  this.status = 'DOING';
   this.grid = new Grid(size);
   this.render = new Render();
   let self = this;
@@ -10,19 +12,27 @@ function Manager(size = 4) {
 }
 
 Manager.prototype.start = function() {
-  // for (let i = 0; i < 3; i++) {
-  //   const position = this.grid.randomAvailableCell();
-  //   this.grid.add(new Tile(position, 2));
-  // }
-  this.grid.add(new Tile({ row: 0, column: 0 }, 2));
-  this.grid.add(new Tile({ row: 1, column: 0 }, 2));
-  this.grid.add(new Tile({ row: 2, column: 0 }, 4));
-  this.grid.add(new Tile({ row: 3, column: 0 }, 4));
-
+  for (let i = 0; i < 2; i++) {
+    this.addRandomTile();
+  }
   this.render.render(this.grid);
 };
 
+Manager.prototype.addRandomTile = function() {
+  const position = this.grid.randomAvailableCell();
+  if (position) {
+    let value = Math.random() < 0.9 ? 2 : 4;
+    let tile = new Tile(position, value);
+    this.grid.add(tile);
+  }
+};
+
 Manager.prototype.listenerFn = function(direction) {
+  if (this.status !== 'DOING') {
+    return;
+  }
+
+  let moved = false;
   const { rowPath, columnPath } = this.getPaths(direction);
   for (let i = 0; i < rowPath.length; i++) {
     for (let j = 0; j < columnPath.length; j++) {
@@ -38,15 +48,60 @@ Manager.prototype.listenerFn = function(direction) {
             },
             tile.value * 2
           );
+
           this.grid.add(merged);
           this.grid.remove(tile);
+          if (merged.value === this.aim) {
+            this.status = 'WIN';
+          }
+          moved = true;
         } else {
           this.moveTile(tile, aim);
+          moved = true;
         }
       }
     }
   }
-  this.render.render(this.grid);
+
+  if (moved) {
+    this.addRandomTile();
+
+    if (this.checkFailure()) {
+      this.status = 'FAILURE';
+    }
+
+    this.render.render(this.grid, this.status);
+  }
+};
+
+Manager.prototype.checkFailure = function() {
+  const emptyCells = this.grid.availableCells();
+  if (emptyCells.length > 0) {
+    return false;
+  }
+
+  for (let row = 0; row < this.grid.size; row++) {
+    for (let column = 0; column < this.grid.size; column++) {
+      let now = this.grid.get({ row, column });
+      let directions = [
+        { row: 0, column: 1 },
+        { row: 0, column: -1 },
+        { row: 1, column: 0 },
+        { row: -1, column: 0 }
+      ];
+      for (let i = 0; i < directions.length; i++) {
+        const direction = directions[i];
+        const next = this.grid.get({
+          row: row + direction.row,
+          column: column + direction.column
+        });
+        if (next && next.value === now.value) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
 };
 
 Manager.prototype.moveTile = function(tile, aim) {
