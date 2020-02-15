@@ -1,7 +1,23 @@
-function Grid(size = 4) {
+function Grid(size = 4, state) {
   this.size = size;
   this.cells = this.init(size);
+  if (state) {
+    this.recover(state);
+  }
 }
+
+Grid.prototype.recover = function({ size, cells }) {
+  this.size = size;
+  for (let row = 0; row < this.size; row++) {
+    for (let column = 0; column < this.size; column++) {
+      const cell = cells[row][column];
+      if (cell) {
+        console.log(cell);
+        this.cells[row][column] = new Tile(cell.position, cell.value);
+      }
+    }
+  }
+};
 
 Grid.prototype.init = function(size) {
   let cells = [];
@@ -67,4 +83,22 @@ Grid.prototype.availableCells = function() {
     }
   }
   return availableCells;
+};
+
+Grid.prototype.serialize = function() {
+  const cellState = [];
+
+  for (let row = 0; row < this.size; row++) {
+    cellState[row] = [];
+    for (let column = 0; column < this.size; column++) {
+      cellState[row].push(
+        this.cells[row][column] ? this.cells[row][column].serialize() : null
+      );
+    }
+  }
+
+  return {
+    size: this.size,
+    cells: cellState
+  };
 };

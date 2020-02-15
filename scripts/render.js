@@ -2,18 +2,22 @@ function Render() {
   this.tileContainer = document.querySelector('.tile-container');
   this.statusContainer = document.querySelector('.status');
   this.scoreContainer = document.querySelector('.now .value');
+  this.bestScoreContainer = document.querySelector('.best .value');
   this.navContainer = document.querySelector('nav');
   this.score = 0;
 }
 
-Render.prototype.render = function(grid, { status = 'DOING', score }) {
+Render.prototype.render = function(
+  grid,
+  { status = 'DOING', score, bestScore }
+) {
   this.empty();
   const cells = grid.contentCells();
   for (let i = 0; i < cells.length; i++) {
     this.renderTile(cells[i]);
   }
   this.renderStatus(status);
-  this.renderScore(score);
+  this.renderScore(score, bestScore);
 };
 
 Render.prototype.empty = function() {
@@ -30,11 +34,12 @@ Render.prototype.renderStatus = function(status) {
     status === 'WIN' ? 'You Win!' : 'Game Over!';
 };
 
-Render.prototype.renderScore = function(score) {
+Render.prototype.renderScore = function(score, bestScore) {
   const diff = score - this.score;
   this.score = score;
 
   this.scoreContainer.innerHTML = score;
+  this.bestScoreContainer.innerHTML = bestScore;
 
   if (diff > 0) {
     const addition = document.createElement('div');

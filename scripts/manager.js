@@ -2,33 +2,50 @@ function Manager(size = 4, aim = 2048) {
   this.size = size;
   this.aim = aim;
   this.render = new Render();
+  this.storage = new Storage();
   let self = this;
   this.listener = new Listener({
     move: function(direction) {
       self.listenerFn(direction);
     },
     start: function() {
-      self.start();
+      self.start(true);
     }
   });
   this.start();
 }
 
-Manager.prototype.start = function() {
-  this.score = 0;
-  this.status = 'DOING';
-  this.grid = new Grid(this.size);
-
-  // for (let i = 0; i < 2; i++) {
-  //   this.addRandomTile();
-  // }
-  this.grid.add(new Tile({ row: 0, column: 0 }, 2));
-  this.grid.add(new Tile({ row: 0, column: 3 }, 2));
-
+Manager.prototype.renderWrapper = function() {
+  this.storage.setBestScore(this.bestScore);
+  this.storage.setCellState({
+    score: this.score,
+    grid: this.grid
+  });
   this.render.render(this.grid, {
     status: this.status,
-    score: this.score
+    score: this.score,
+    bestScore: this.bestScore
   });
+};
+
+Manager.prototype.start = function(force) {
+  this.bestScore = this.storage.getBestScore() || 0;
+  const state = this.storage.getCellState();
+  if (!state || force) {
+    this.score = 0;
+    this.status = 'DOING';
+    this.grid = new Grid(this.size);
+
+    for (let i = 0; i < 2; i++) {
+      this.addRandomTile();
+    }
+  } else {
+    this.score = state.score;
+    this.status = 'DOING';
+    this.grid = new Grid(this.size, state.grid);
+  }
+
+  this.renderWrapper();
 };
 
 Manager.prototype.addRandomTile = function() {
@@ -65,6 +82,9 @@ Manager.prototype.listenerFn = function(direction) {
           );
           merged.mergedTiles = [tile, next];
           this.score += merged.value;
+          if (this.score > this.bestScore) {
+            this.bestScore = this.score;
+          }
           this.grid.add(merged);
           this.grid.remove(tile);
 
@@ -81,7 +101,6 @@ Manager.prototype.listenerFn = function(direction) {
     }
   }
 
-  console.log(this.grid);
   if (moved) {
     this.addRandomTile();
 
@@ -89,10 +108,7 @@ Manager.prototype.listenerFn = function(direction) {
       this.status = 'FAILURE';
     }
 
-    this.render.render(this.grid, {
-      status: this.status,
-      score: this.score
-    });
+    this.renderWrapper();
   }
 };
 

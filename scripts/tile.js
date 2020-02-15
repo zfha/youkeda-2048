@@ -11,3 +11,13 @@ Tile.prototype.updatePosition = function(position) {
   this.row = position.row;
   this.column = position.column;
 };
+
+Tile.prototype.serialize = function() {
+  return {
+    position: {
+      row: this.row,
+      column: this.column
+    },
+    value: this.value
+  };
+};
