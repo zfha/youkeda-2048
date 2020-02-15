@@ -50,8 +50,15 @@ main {
       position: absolute;
       width: $tile-size;
       height: $tile-size;
-      line-height: $tile-size;
       border-radius: 4px;
+
+      transition: transform 100ms ease-in-out;
+    }
+
+    .tile-inner {
+      width: 100%;
+      height: 100%;
+      line-height: $tile-size;
       background: #eee4da;
       text-align: center;
       font-weight: bold;
@@ -68,57 +75,93 @@ main {
         }
       }
     }
+    .tile-new .tile-inner {
+      animation: appear 200ms ease-in-out;
+      animation-delay: 100ms;
+      animation-fill-mode: backwards;
+    }
 
-    .tile.tile-2 {
+    .tile-merged .tile-inner {
+      z-index: 20;
+      animation: pop 200ms ease 100ms;
+      animation-fill-mode: backwards;
+    }
+
+    .tile.tile-2 .tile-inner {
       background: #eee4da;
     }
-    .tile.tile-4 {
+    .tile.tile-4 .tile-inner {
       background: #ede0c8;
     }
-    .tile.tile-8 {
+    .tile.tile-8 .tile-inner {
       color: #f9f6f2;
       background: #f2b179;
     }
-    .tile.tile-16 {
+    .tile.tile-16 .tile-inner {
       color: #f9f6f2;
       background: #f59563;
     }
-    .tile.tile-32 {
+    .tile.tile-32 .tile-inner {
       color: #f9f6f2;
       background: #f67c5f;
     }
-    .tile.tile-64 {
+    .tile.tile-64 .tile-inner {
       color: #f9f6f2;
       background: #f65e3b;
     }
-    .tile.tile-128 {
+    .tile.tile-128 .tile-inner {
       color: #f9f6f2;
       background: #edcf72;
       font-size: 30px;
     }
 
-    .tile.tile-256 {
+    .tile.tile-256 .tile-inner {
       color: #f9f6f2;
       background: #edcc61;
       font-size: 30px;
     }
 
-    .tile.tile-512 {
+    .tile.tile-512 .tile-inner {
       color: #f9f6f2;
       background: #edc850;
       font-size: 30px;
     }
 
-    .tile.tile-1024 {
+    .tile.tile-1024 .tile-inner {
       color: #f9f6f2;
       background: #edc53f;
       font-size: 22px;
     }
 
-    .tile.tile-2048 {
+    .tile.tile-2048 .tile-inner {
       color: #f9f6f2;
       background: #edc22e;
       font-size: 22px;
     }
+  }
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
   }
 }

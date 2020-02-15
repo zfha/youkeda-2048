@@ -2,6 +2,8 @@ function Render() {
   this.tileContainer = document.querySelector('.tile-container');
   this.statusContainer = document.querySelector('.status');
   this.scoreContainer = document.querySelector('.now .value');
+  this.navContainer = document.querySelector('nav');
+  this.score = 0;
 }
 
 Render.prototype.render = function(grid, { status = 'DOING', score }) {
@@ -20,6 +22,7 @@ Render.prototype.empty = function() {
 
 Render.prototype.renderStatus = function(status) {
   if (status === 'DOING') {
+    this.statusContainer.style.display = 'none';
     return;
   }
   this.statusContainer.style.display = 'flex';
@@ -28,17 +31,48 @@ Render.prototype.renderStatus = function(status) {
 };
 
 Render.prototype.renderScore = function(score) {
+  const diff = score - this.score;
+  this.score = score;
+
   this.scoreContainer.innerHTML = score;
+
+  if (diff > 0) {
+    const addition = document.createElement('div');
+    addition.classList.add('score-addition');
+    addition.innerHTML = '+' + diff;
+    this.scoreContainer.appendChild(addition);
+  }
 };
 
 Render.prototype.renderTile = function(tile) {
   const tileDom = document.createElement('div');
+  const tileInnerDom = document.createElement('div');
   let classList = [
     'tile',
     `tile-${tile.value}`,
     `tile-position-${tile.row + 1}-${tile.column + 1}`
   ];
-  tileDom.innerHTML = tile.value;
+
+  if (tile.prePosition) {
+    classList[2] = `tile-position-${tile.prePosition.row + 1}-${tile.prePosition
+      .column + 1}`;
+    setTimeout(function() {
+      classList[2] = `tile-position-${tile.row + 1}-${tile.column + 1}`;
+      tileDom.setAttribute('class', classList.join(' '));
+    }, 16);
+  } else if (tile.mergedTiles) {
+    classList.push('tile-merged');
+    tileDom.setAttribute('class', classList.join(' '));
+
+    for (let i = 0; i < tile.mergedTiles.length; i++) {
+      this.renderTile(tile.mergedTiles[i]);
+    }
+  } else {
+    classList.push('tile-new');
+  }
+  tileInnerDom.innerHTML = tile.value;
+  tileInnerDom.classList = ['tile-inner'];
+  tileDom.appendChild(tileInnerDom);
   tileDom.setAttribute('class', classList.join(' '));
   this.tileContainer.appendChild(tileDom);
 };

@@ -19,9 +19,12 @@ Manager.prototype.start = function() {
   this.status = 'DOING';
   this.grid = new Grid(this.size);
 
-  for (let i = 0; i < 2; i++) {
-    this.addRandomTile();
-  }
+  // for (let i = 0; i < 2; i++) {
+  //   this.addRandomTile();
+  // }
+  this.grid.add(new Tile({ row: 0, column: 0 }, 2));
+  this.grid.add(new Tile({ row: 0, column: 3 }, 2));
+
   this.render.render(this.grid, {
     status: this.status,
     score: this.score
@@ -43,6 +46,8 @@ Manager.prototype.listenerFn = function(direction) {
   }
 
   let moved = false;
+  this.clearMergedTile();
+
   const { rowPath, columnPath } = this.getPaths(direction);
   for (let i = 0; i < rowPath.length; i++) {
     for (let j = 0; j < columnPath.length; j++) {
@@ -58,10 +63,12 @@ Manager.prototype.listenerFn = function(direction) {
             },
             tile.value * 2
           );
+          merged.mergedTiles = [tile, next];
           this.score += merged.value;
-
           this.grid.add(merged);
           this.grid.remove(tile);
+
+          tile.updatePosition({ row: next.row, column: next.column });
           if (merged.value === this.aim) {
             this.status = 'WIN';
           }
@@ -74,6 +81,7 @@ Manager.prototype.listenerFn = function(direction) {
     }
   }
 
+  console.log(this.grid);
   if (moved) {
     this.addRandomTile();
 
@@ -85,6 +93,17 @@ Manager.prototype.listenerFn = function(direction) {
       status: this.status,
       score: this.score
     });
+  }
+};
+
+Manager.prototype.clearMergedTile = function() {
+  for (let row = 0; row < this.grid.size; row++) {
+    for (let column = 0; column < this.grid.size; column++) {
+      const tile = this.grid.get({ row, column });
+      if (tile) {
+        tile.mergedTiles = null;
+      }
+    }
   }
 };
 
